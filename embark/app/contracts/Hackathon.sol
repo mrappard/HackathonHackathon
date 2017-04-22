@@ -27,16 +27,16 @@ contract HackathonPrime{
     uint timeEnd;
     address hackathon;
   }
-  mapping (address => uint256) public hackathons;
+  mapping (address => uint256) public hackathonMap;
   mapping (address => bool) public administrator;
   HackEntry [] hackathons;
 
   function HackathonPrime(){
-    administrator=msg.sender;
+    administrator[msg.sender]=true;
 
   }
 
-  function addEntry(address newHackathon,uint256 start,uint256 end,){
+  function addEntry(address newHackathon,uint256 start,uint256 end){
     hackathons.push(HackEntry(true,false,now,start,end,newHackathon));
   }
 
@@ -59,7 +59,7 @@ contract HackathonPrime{
   }
 
   function getHackathon(uint256 index) constant returns (bool initialized,bool approved,uint timeCreated,uint timeStart,uint timeEnd,address hackathon){
-    HackEntry theEntry = hackathons[index]
+    HackEntry theEntry = hackathons[index];
     if (administrator[msg.sender]){
       if (theEntry.initialized){
         initialized=theEntry.initialized;
@@ -104,8 +104,8 @@ contract Hackathon{
 
   string name;
   uint256 description;
-  mapping(address=>int8) teamsLink;
-  team[] teams;
+  mapping(address=>uint8) teamsLink;
+  Team[] teams;
   address[] peopleAsk;
   bool[] peopleApproved;
   mapping (address => bool) public people;
@@ -164,8 +164,8 @@ contract Hackathon{
 
   function createTeam(string name){
     if (teamsLink[msg.sender]==0){
-      address[] members;
-      members.push(msg.sender());
+      address[] memory members;
+      //members.push(msg.sender);
       teams.push(Team(true,false,name,0,members));
       }
     }
@@ -178,10 +178,10 @@ contract Hackathon{
     }
   }
 
-  function updateDescription(uint256 paper){
+  function updateDescription(int256 paper){
     uint8 theTeam = teamsLink[msg.sender];
     if (theTeam!=0){
-      teams[theTeam].paper=paper;
+      teams[theTeam].teamPaper=paper;
     }
   }
 
@@ -193,28 +193,15 @@ contract Hackathon{
   }
 
   function calculateVotes()constant returns (uint16[256]){
-    uint16[256] theVotes;
-    for (int counter = 0; counter<votesValues.length; counter++){
+    uint16[256] memory theVotes;
+    for (uint counter = 0; counter<votesValues.length; counter++){
       uint8 vote = votesValues[counter];
       theVotes[vote]=theVotes[vote]+1;
     }
     return theVotes;
   }
 
-  }
 
-
-
-
-
-
-
-Team Array Address
-People Map Address
-TeamData Paper
-Votes Map Address Team
-Voted Address Array
-Winning Team Array <Struct INT, Paper>
 }
 
 
