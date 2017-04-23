@@ -2,9 +2,19 @@
   "default": {
     "gas": "auto",
     "contracts": {
-      "SimpleStorage": {
+      "StonePaper": {
+        "gas": 4500000,
         "args": [
-          100
+        ]
+      },
+      "HackathonPrime": {
+        "gas": 4500000,
+        "args": [
+        ]
+      },
+      "Hackathon": {
+        "gas": 4500000,
+        "args": [
         ]
       }
     }

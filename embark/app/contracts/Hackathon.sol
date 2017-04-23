@@ -59,34 +59,68 @@ contract HackathonPrime{
   }
 
   function getHackathon(uint256 index) constant returns (bool initialized,bool approved,uint timeCreated,uint timeStart,uint timeEnd,address hackathon){
-    HackEntry theEntry = hackathons[index];
-    if (administrator[msg.sender]){
-      if (theEntry.initialized){
-        initialized=theEntry.initialized;
-        approved=theEntry.approved;
-        timeCreated=theEntry.timeCreated;
-        timeStart=theEntry.timeStart;
-        timeEnd=theEntry.timeEnd;
-        hackathon=theEntry.hackathon;
-      } else {
-        initialized=false;
-      }
-    } else {
-      if (theEntry.approved){
-        initialized=theEntry.initialized;
-        approved=theEntry.approved;
-        timeCreated=theEntry.timeCreated;
-        timeStart=theEntry.timeStart;
-        timeEnd=theEntry.timeEnd;
-        hackathon=theEntry.hackathon;
-      } else {
-        initialized=false;
-        approved=false;
-
-      }
+    if (index==hackathons.length){
+      initialized=false;
+      return;
     }
 
+    if (index>hackathons.length){
+      initialized=false;
+      return;
+    }
+    HackEntry theEntry = hackathons[index];
+
+    if (theEntry.initialized){
+        initialized=theEntry.initialized;
+        approved=theEntry.approved;
+        timeCreated=theEntry.timeCreated;
+        timeStart=theEntry.timeStart;
+        timeEnd=theEntry.timeEnd;
+        hackathon=theEntry.hackathon;
+        timeEnd = 6;
+      } else {
+        initialized=false;
+        approved = false;
+        timeEnd = 7;
+
+      }
+
+
   }
+
+
+  function getHackathonApproved(uint256 index) constant returns (bool initialized,bool approved,uint timeCreated,uint timeStart,uint timeEnd,address hackathon){
+    if (index==hackathons.length){
+      initialized=false;
+      return;
+    }
+
+    if (index>hackathons.length){
+      initialized=false;
+      return;
+    }
+    HackEntry theEntry = hackathons[index];
+
+    if (theEntry.approved){
+        initialized=theEntry.initialized;
+        approved=theEntry.approved;
+        timeCreated=theEntry.timeCreated;
+        timeStart=theEntry.timeStart;
+        timeEnd=theEntry.timeEnd;
+        hackathon=theEntry.hackathon;
+        timeEnd = 6;
+      } else {
+        initialized=theEntry.initialized;
+        approved = false;
+        timeEnd = 7;
+
+      }
+
+
+  }
+
+
+
 
 }
 
@@ -98,21 +132,31 @@ contract Hackathon{
     bool initialized;
     bool exists;
     string name;
-    int256 teamPaper;
+    uint256 teamPaper;
     address[] members;
   }
 
   string name;
   uint256 description;
+  uint256 release;
   mapping(address=>uint8) teamsLink;
   Team[] teams;
   address[] peopleAsk;
   bool[] peopleApproved;
+  mapping (address => uint256) peopleApplication;
+
   mapping (address => bool) public people;
   mapping (address => bool) public voted;
   uint8[] votesValues;
   mapping (address => bool) public administrator;
   bool canVote;
+
+  function Hackathon(){
+    administrator[msg.sender]=true;
+    address[] memory members;
+    teams.push(Team(true,false,"Choose Your Team",0,members));
+    canVote = true;
+  }
 
   function setVote(bool can){
     if (administrator[msg.sender]){
@@ -120,10 +164,32 @@ contract Hackathon{
     }
   }
 
+  function getPeople(uint256 index) constant returns(address person, bool personApproved, bool end, uint256 application){
+    if (index==peopleAsk.length||index>peopleAsk.length){
+      end = true;
+    } else{
+      person = peopleAsk[index];
+      application = peopleApplication[person];
+      personApproved = peopleApproved[index];
+    }
+  }
 
-  function nameHackathon(string newName){
+  function areYouApproved() constant returns(bool personApproved){
+    return people[msg.sender];
+  }
+
+  function describe(address stonePaperAccount) constant returns(string nameR,uint256 descriptionD, uint256 releaseD  ){
+    nameR = name;
+    descriptionD = description;
+    releaseD = release;
+  }
+
+
+  function nameHackathon(address stonePaperAccount,string newName){
     if (administrator[msg.sender]){
       name = newName;
+      StonePaper stonePaperC = StonePaper(stonePaperAccount);
+      stonePaperC.assignLawyer(newName);
     }
   }
 
@@ -133,8 +199,42 @@ contract Hackathon{
     }
   }
 
-  function apply(){
+  function setDescriptionWithPaper(
+         address stonePaperAccount,
+         string nameI,
+         bytes32 signI,
+         uint256 databaseI,
+         uint256[] metaI,
+         address contractLoc,
+         address[] goToLocation){
+    if (administrator[msg.sender]){
+      StonePaper stonePaperC = StonePaper(stonePaperAccount);
+      description = stonePaperC.createPaper(nameI,signI,databaseI,metaI,contractLoc,goToLocation);
+    }
+  }
+
+  function setReleaseWithPaper(
+         address stonePaperAccount,
+         string nameI,
+         bytes32 signI,
+         uint256 databaseI,
+         uint256[] metaI,
+         address contractLoc,
+         address[] goToLocation){
+    if (administrator[msg.sender]){
+      StonePaper stonePaperC = StonePaper(stonePaperAccount);
+      release = stonePaperC.createPaper(nameI,signI,databaseI,metaI,contractLoc,goToLocation);
+    }
+  }
+
+
+
+  function apply(address stonePaperAccount, bytes32 signI, uint256 databaseI,
+    uint256[] metaI,
+    address[] goToLocation){
     if (people[msg.sender]==false){
+      StonePaper stonePaperC = StonePaper(stonePaperAccount);
+      peopleApplication[msg.sender] = stonePaperC.createPaper("Applicant",signI,databaseI,metaI,this,goToLocation);
       peopleAsk.push(msg.sender);
       peopleApproved.push(false);
     }
@@ -142,46 +242,65 @@ contract Hackathon{
 
   function verifyPeople(uint256 index){
     if (administrator[msg.sender]){
-      if (peopleApproved[index]==false){
         peopleApproved[index]=true;
         people[peopleAsk[index]]=true;
-      }
     }
+
   }
 
   function vote(uint8 index){
     if (!canVote){
       throw;
     }
-    if (people[msg.sender]){
       if (voted[msg.sender]==false){
         voted[msg.sender]=true;
-      } else {
         votesValues.push(index);
+      }else{
+        throw;
       }
-    }
+
   }
 
   function createTeam(string name){
     if (teamsLink[msg.sender]==0){
       address[] memory members;
-      //members.push(msg.sender);
-      teams.push(Team(true,false,name,0,members));
+      teams.push(Team(true,true,name,0,members));
+      teamsLink[msg.sender]=uint8(teams.length-1);
+      } else {
+        teams[teamsLink[msg.sender]].name=name;
       }
     }
 
+  function getTeam(uint index) constant returns (bool initialized,bool exists,string name,uint256 teamPaper,address[] members, bool end){
+    if (index>teams.length||index==teams.length){
+      end=true;
+      return;
+    }
+    Team aTeam = teams[index];
+
+    initialized = aTeam.initialized;
+    exists = aTeam.exists;
+    name = aTeam.name;
+    teamPaper = aTeam.teamPaper;
+    members = aTeam.members;
+
+  }
+
   function addMember(address newUser){
     uint8 theTeam = teamsLink[msg.sender];
-    if (theTeam!=0&&teamsLink[newUser]!=0){
+    if (theTeam!=0&&teamsLink[newUser]==0&&people[newUser]==true){
       teams[theTeam].members.push(newUser);
       teamsLink[newUser]=theTeam;
+    } else {
+      throw;
     }
   }
 
-  function updateDescription(int256 paper){
+  function updateDescription(bytes32 signI,uint256[] metaI,address stonePaperAccount){
     uint8 theTeam = teamsLink[msg.sender];
     if (theTeam!=0){
-      teams[theTeam].teamPaper=paper;
+      StonePaper stonePaperC = StonePaper(stonePaperAccount);
+      teams[theTeam].teamPaper = stonePaperC.createPaperLight("Team Description",signI,0,msg.sender,metaI);
     }
   }
 
@@ -403,6 +522,29 @@ contract StonePaper {
     lawyerI = the lawyer who has added the document
 
     */
+
+    function createPaperLight(
+      string nameI,
+      bytes32 signI,
+      uint256 databaseI,
+      address goToLocation,
+      uint256[] metaI
+      ) returns (uint256){
+
+        uint256 theIndex = papers.length;
+        papers.push(Paper(nameI,signI,databaseI,now,tx.origin,msg.sender,metaI,msg.sender));
+
+        briefcase[msg.sender].push(theIndex);
+        lastPaperAdded[msg.sender][msg.sender]=theIndex;
+
+        briefcase[goToLocation].push(theIndex);
+        lastPaperAdded[goToLocation][msg.sender]=theIndex;
+
+        return theIndex;
+
+
+      }
+
     function createPaper(
        string nameI,
        bytes32 signI,
@@ -410,7 +552,7 @@ contract StonePaper {
        uint256[] metaI,
        address contractLoc,
        address[] goToLocation
-        ) {
+        ) returns (uint256){
 
             for(uint x = 0; x <metaI.length; x++) {
                 if (!testMeta(metaI[x])){
@@ -431,6 +573,7 @@ contract StonePaper {
           briefcase[goToLocation[y]].push(theIndex);
           lastPaperAdded[goToLocation[y]][contractLoc]=theIndex;
         }
+        return theIndex;
 
 
     }
@@ -485,6 +628,17 @@ contract StonePaper {
     lawyer = the lawyer who authenticated the document
 
     */
+    function getPaperQuick(uint256 indexI) constant returns (
+      bytes32 sig,
+      uint256 database
+
+      ){
+
+        Paper data  = papers[indexI];
+        sig=data.sig;
+        database=data.database;
+
+    }
 
     function getPaper(uint256 indexI) constant returns (
         string name,

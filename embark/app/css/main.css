@@ -3,6 +3,9 @@ div {
   margin: 15px;
 }
 
+#AddressHackFact{
+  width: 500px;
+}
 .logs {
   background-color: black;
   font-size: 14px;

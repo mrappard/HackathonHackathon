@@ -1,103 +1,224 @@
 <html>
   <head>
-    <title>Embark - SimpleStorage Demo</title>
+    <title>StonePaper - Hackathon Demo</title>
     <link rel="stylesheet" href="css/app.css">
+        <script src="js/signature_pad.min.js"></script>
     <script src="js/app.js"></script>
+
   </head>
   <body class="container">
-    <h3>Embark - Usage Example</h3>
+    <h3>StonePaper - Hackathon Demo</h3>
 
     <ul class="nav nav-tabs" role="tablist" id="myTabs">
-      <li role="presentation" class="active"><a href="#blockchain" aria-controls="blockchain" role="tab" data-toggle="tab">Blockchain</a></li>
-      <li role="presentation"><a href="#storage" aria-controls="storage" role="tab" data-toggle="tab">Decentralized Storage (IPFS)<span class="pull-right" id="status-storage"></a></li>
-      <li role="presentation"><a href="#communication" aria-controls="communication" role="tab" data-toggle="tab">P2P communication (Whisper/Orbit)<span class="pull-right" id="status-communication"></span></a></li>
+      <li role="presentation" class="active"><a href="#hackPrime" aria-controls="hackPrime" role="tab" data-toggle="tab">Hackathon Prime</a></li>
+      <li role="presentation"><a href="#hackFact" aria-controls="hackFact" role="tab" data-toggle="tab">Hackathon Factory<span class="pull-right" id="#hackFact"></a></li>
+      <li role="presentation"><a href="#hackPlay" aria-controls="hackPlay" role="tab" data-toggle="tab">Hackathon Playground<span class="pull-right" id="#hackPlay"></span></a></li>
+      <li role="presentation"><a href="#file" aria-controls="file" role="tab" data-toggle="tab">Hackathon Playground<span class="pull-right" id="#file"></span></a></li>
+    </ul>
     </ul>
 
     <div class="tab-content">
-      <div role="tabpanel" class="tab-pane active" id="blockchain">
-        <h3> 1. Set the value in the blockchain</h3>
+      <div role="tabpanel" class="tab-pane active" id="hackPrime">
+        <h3> Get a List of Hackathons</h3>
         <div class="form-group form-inline">
-          <input type="text" class="text form-control" value="10">
-          <button class="set btn btn-primary">Set Value</button>
-          <p>Once you set the value, the transaction will need to be mined and then the value will be updated on the blockchain.</p>
+          <button class="set btn btn-primary" id="GetHacksPrimeB">Get Hackathons</button>
+          <p>This will pull a full list of Hackathons from the BlockChain.</p>
+          <select name="Societies" id="HackPrimeStorage"></select><br>
+          <br>
+          <br>
+          <div id="HackPrimeStorageR"></div>
+          <div id="HackPrimeApproveR"></div>
         </div>
 
-        <h3> 2. Get the current value</h3>
-        <div class="form-group">
-          <div>
-            current value is <span class="value"></span>
+        <h3> Get a list of Approved Hackathons</h3>
+        <div class="form-group form-inline">
+          <button class="set btn btn-primary" id="HackPrimeListB">Get Hackathons</button>
+          <p>This will pull list of approved Hackathons from HackPrime.</p>
+          <select name="Societies" id="HackPrimeList"></select><br>
+          <br>
+          <br>
+          <div id="HackPrimeListR"></div>
+        </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="hackFact">
+        <div id="#hackFact">
+          <h3> Create a Hackathon</h3>
+          <div class="form-group form-inline">
+            <button class="set btn btn-primary" id="CreateHackFactB">Create Your Hackathon</button>
+            <p>This will create your Hackathon on the blockchain.</p>
+            <div id="CreateHackFactR">&nbsp</div>
           </div>
-          <button class="get btn btn-primary">Get Value</button>
-          <p>Click the button to get the current value. The initial value is 100.</p>
-        </div>
+          <br>
 
-        <h3> 3. Contract Calls </h3>
-        <p>Javascript calls being made: </p>
-        <div class="logs">
-        </div>
+          <div class="form-group form-inline">
+            <input type="text" class="text form-control" value="0x0" id="AddressHackFact">
+            <p>This is the Hackathon Address you are working with. You can change in manually here</p>
+            <button class="set btn btn-primary" id="BLARG">Change Address</button>
+          </div>
+
+
+          <div class="form-group form-inline">
+            <input type="text" class="text form-control" value="Hackathon Name" id="NameHackFact">
+            <p>This is the name that will be used to index the Hackathon.</p>
+            <button class="set btn btn-primary" id="NameHackFactB">Name Hackathon</button>
+            <div id="NameHackFactR">&nbsp</div>
+          </div>
+
+          <div class="form-group form-inline">
+            <textarea rows="12" cols="50" id="DescriptionHackFact">Write what ever text you'd like here.</textarea><br>
+            <p>This is the information that will be displayed. Feel free to use HTML, as images will be supported by Javascript will not.</p>
+            <button class="set btn btn-primary" id="DescriptionHackFactB">File description</button>
+            <div id="DescriptionHackFactR">&nbsp</div>
+          </div>
+
+          <div class="form-group form-inline">
+            <textarea rows="12" cols="50" id="ReleaseHackFact">Write what ever text you'd like here.</textarea><br>
+            <p>Release Forms are important to make people understand the rules of your hackathon, insert a E-Contract in StonePaper mark up language here.</p>
+            <button class="set btn btn-primary" id="ReleaseHackFactB">File release</button>
+            <div id="ReleaseHackFactR">&nbsp</div>
+          </div>
+
+          <div class="form-group form-inline">
+            <input type="text" class="text form-control" value="How Much Ether" id="EtherHackFact">
+            <p>You are free to set an Ether cost to your Hackathon if you want to keep everything in the blockchain</p>
+            <button class="set btn btn-primary" id="EtherHackFactB">How much does it cost</button>
+            <div id="EtherHackFactR">&nbsp</div>
+          </div>
+
+          <div class="form-group form-inline">
+            <p>If you are ready you can deploy your contract to Hackathon Prime and take members</p>
+            <button class="set btn btn-primary" id="PrimeHackFactB">Deploy to Hack Prime</button>
+            <div id="PrimeHackFactR">&nbsp</div>
+          </div>
+
+
+
       </div>
-      <div role="tabpanel" class="tab-pane" id="storage">
-        <div class="error alert alert-danger" role="alert">The node you are using does not support IPFS. Please ensure <a href="https://github.com/ipfs/js-ipfs-api#cors" target="_blank">CORS</a> is setup for the IPFS node.</div>
-        <div id="storage-controls">
+      </div>
+      <div role="tabpanel" class="tab-pane" id="hackPlay">
+        <div id="#hackPlay">
 
-        <h3>Save text to IPFS</h3>
-        <div class="form-group form-inline">
-          <input type="text" class="ipfsText text form-control" value="hello world!">
-          <button class="setIpfsText btn btn-primary">Save</button>
-          <p>generated Hash: <span class="textHash"></span></p>
-        </div>
 
-        <h3>Load text from IPFS given an hash</h3>
-        <div class="form-group form-inline">
-          <input type="text" class="textHash text form-control" size="60">
-          <button class="loadIpfsHash set btn btn-primary">Load</button>
-          <p>result: <span class="ipfsText"></span></p>
-        </div>
+          <h3> Get a list of Approved Hackathons</h3>
+          <div class="form-group form-inline">
+            <button class="set btn btn-primary" id="playHackSelB">Get Hackathons</button>
+            <p>This will pull list of Hackathons from HackPrime.</p>
+            <select name="Societies" id="playHackSelS"></select><br>
+            <br>
+            <br>
+            <div id="playHackSelR"></div>
+          </div>
 
-        <h3>upload file to ipfs</h3>
-        <div class="form-group form-inline">
-          <input type="file" class="form-control">
-          <button class="uploadFile set btn btn-primary">upload</button>
-          <p>generated hash: <span class="fileIpfsHash"></span></p>
-        </div>
 
-        <h3>Get file or image from ipfs</h3>
-        <div class="form-group form-inline">
-          <input type="text" class="fileIpfsHash form-control" size="60">
-          <button class="loadIpfsFile set btn btn-primary">Load</button>
-          <p>file available at: <span class="ipfsFileUrl"></span></p>
-          <p><img class="ipfsImage" src=""></p>
-        </div>
 
-        <p>Javascript calls being made: </p>
-        <div class="logs">
-          <br> EmbarkJS.Storage.setProvider('ipfs',{server: 'localhost', port: '5001'})
-        </div>
+          <h3> Sign up for the Hackathon</h3>
+          <div class="form-group form-inline">
+            <button class="set btn btn-primary" id="playHackSignUp">Sign Up For This Hackathon</button>
+            <p>This will begin the sign up procedure if you haven't signed up for this Hackathon before.</p>
+            <div id="ContractView"></div>
+          </div>
+
+
+          <h3> Check If You've been Accepted</h3>
+          <div class="form-group form-inline">
+            <button class="set btn btn-primary" id="AreAcceptedB">Check If You've Been Accepted</button>
+            <p>This will begin the sign up procedure if you haven't signed up for this Hackathon before.</p>
+            <div id="AreAcceptedR"></div>
+          </div>
+
+
+          <h3> Check Out the Teams</h3>
+          <div class="form-group form-inline">
+            <p>You can see all the teams and who is involved here.</p>
+            <select name="Societies" id="teamSelS"></select><br>
+            <button class="set btn btn-primary" id="GrabTeamB">Grab Teams</button>
+            <div id="TeamDescriptionR">&nbsp</div>
+          </div>
+
+          <h3> Make your own team</h3>
+          <div class="form-group form-inline" id="playHackMakeTeam">
+            <p>None of those team seem interesting, why don't you make your own team.</p>
+            <input type="text" class="text form-control" value="TeamName" id="CreateTeamT">
+            <button class="set btn btn-primary" id="CreateTeamB">Create Your Own Team</button>
+          </div>
+
+          <h3> Write a Description for your team</h3>
+          <div class="form-group form-inline">
+            <textarea rows="12" cols="50" id="DescriptionTeam">This will be saved as a description</textarea><br>
+            <p>Write a description of the Team so people can understand what your about</p>
+            <button class="set btn btn-primary" id="DescriptionTeamB">Update Your Description</button>
+            <div id="DescriptionTeamR">&nbsp</div>
+          </div>
+
+          <h3> Add team members</h3>
+          <div class="form-group form-inline">
+            <p>Would you like to add more team members</p>
+            <input type="text" class="text form-control" value="Address of Team mate" id="TeamAddress">
+            <button class="set btn btn-primary" id ="TeamAddressB">Add Team Members</button>
+            <div id="TeamAddressR">&nbsp</div>
+          </div>
+
+          <h3>Vote</h3>
+          <div class="form-group form-inline">
+            <p>Voting has begun. Feel free to vote for your favorite team. Keep in mind you only get one vote.</p>
+            <select name="Societies" id="teamSelS_2"></select><br>
+            <button class="set btn btn-primary" id="CastAVote">Cast a Vote</button>
+          </div>
+
+
+
+          <h3>Admin</h3>
+          <div class="form-group form-inline">
+            <p>Enable or Disable Voting</p>
+            <button class="set btn btn-primary">Add Team Members</button>
+          </div>
+
+          <h3>Vote Tally</h3>
+          <div class="form-group form-inline">
+            <p>If there is anything the last USA election has taught us. It's that polls are 100% accurate. Grab a quick poll of the data.</p>
+            <button class="set btn btn-primary" id="CountVotes">Do A Poll</button>
+            <div id="CountVotesR">&nbsp</div>
+          </div>
+
+          <h3>Approve Applicant</h3>
+          <div class="form-group form-inline">
+            <p>Approve Applicent</p>
+            <select name="Societies" id="PlayPeople1"></select><br>
+            <button class="set btn btn-primary" id="ApprovePeopleS">Get People</button><button class="set btn btn-primary" id="PersonApprove">Approve</button>
+            <div id="SigPoint">&nbsp</div>
+          </div>
+
+          <h3>Generate an Award</h3>
+          <div class="form-group form-inline">
+            <p>Generate an Award for the winner that can be seen by everyone on the Blockchain</p>
+            <button class="set btn btn-primary">Add Team Members</button>
+          </div>
+
+          <h3>Generate an Complaint</h3>
+          <div class="form-group form-inline">
+            <p>Generate an Award for the winner that can be seen by everyone on the Blockchain</p>
+            <button class="set btn btn-primary">Add Team Members</button>
+          </div>
+
+
+
+
+
+
+
+
+
+
       </div>
       </div>
-      <div role="tabpanel" class="tab-pane" id="communication">
-        <div class="error alert alert-danger" role="alert">The node you are using does not support Whisper</div>
-        <div id="communication-controls">
-        <h3>Listen To channel</h3>
-        <div class="form-group form-inline listen">
-          <input type="text" class="channel text form-control" placeholder="channel">
-          <button class="listenToChannel set btn btn-primary">Start Listening</button>
-          <div id="subscribeList"></div>
-          <p>messages received:<p>
-          <div id="messagesList"></div>
-        </div>
-
-        <h3>Send Message</h3>
-        <div class="form-group form-inline send">
-          <input type="text" class="channel text form-control" placeholder="channel">
-          <input type="text" class="message text form-control" placeholder="message">
-          <button class="sendMessage set btn btn-primary">Send Message</button>
-        </div>
-
-        <p>Javascript calls being made: </p>
-        <div class="logs">
-          <br> EmbarkJS.Messages.setProvider('whisper')
-        </div>
+      <div role="tabpanel" class="tab-pane" id="file">
+        <div id="#file">
+          <h3> 4. Set the value in the blockchain</h3>
+          <div class="form-group form-inline">
+            <input type="text" class="text form-control" value="10">
+            <button class="set btn btn-primary">Set Value</button>
+            <p>Once you set the value, the transaction will need to be mined and then the value will be updated on the blockchain.</p>
+          </div>
       </div>
       </div>
     </div>
